@@ -1,0 +1,30 @@
+digraph G {
+  graph [rankdir=TB, nodesep=0.25, newrank=true, ranksep=0.32, fontname="Helvetica", fontsize=11, bgcolor="white", pad=0.2];
+  node  [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=10, color="#3b4a5a", penwidth=1.1, width=3.6, margin="0.14,0.07"];
+  edge  [color="#3b4a5a", arrowsize=0.7];
+
+  subgraph cluster_data { label="Data preparation"; style="rounded,dashed"; color="#8a9aa9"; fontcolor="#3b4a5a";
+    s1 [label=<<b>1. Dataset acquisition</b><br/>Mendeley Data, version 3<br/>2,354 images: Sigatoka, Cordana, healthy>, fillcolor="#e8eef4"];
+    s2 [label=<<b>2. Exploratory analysis</b><br/>Metadata, EXIF, MD5 duplicate check>, fillcolor="#e8eef4"];
+    s3 [label=<<b>3. Data leakage audit</b><br/>Capture time from file names (bursts)<br/>Visual similarity (ResNet50, SIFT)>, fillcolor="#fdf1dc"];
+    s4 [label=<<b>4. Day-based split</b><br/>Test: 4 full sampling days (232)<br/>Validation: time groups (236) | Training (1,886)>, fillcolor="#fdf1dc"];
+    s5 [label=<<b>5. Preprocessing</b><br/>EXIF orientation, resize to 224 x 224<br/>ImageNet normalization, no augmentation>, fillcolor="#e8eef4"];
+  }
+  subgraph cluster_train { label="Model training"; style="rounded,dashed"; color="#8a9aa9"; fontcolor="#3b4a5a";
+    s6 [label=<<b>6. Model configuration</b><br/>ImageNet weights, 3-class output head>, fillcolor="#e6f2e8"];
+    subgraph fam { rank=same;
+    cnn [label=<<b>CNN</b><br/>ResNet50<br/>EfficientNetB0<br/>MobileNetV2>, width=1.15, fillcolor="#ffffff"];
+    trf [label=<<b>Transformer</b><br/>ViT-B/16<br/>Swin-T>, width=1.15, fillcolor="#ffffff"];
+    hyb [label=<<b>Hybrid</b><br/>CoAtNet-0>, width=1.15, fillcolor="#ffffff"];
+    }
+    s7 [label=<<b>7. Training</b><br/>AdamW, weighted cross-entropy<br/>Early stopping on validation loss, seed 42>, fillcolor="#e6f2e8"];
+  }
+  subgraph cluster_eval { label="Evaluation"; style="rounded,dashed"; color="#8a9aa9"; fontcolor="#3b4a5a";
+    s8 [label=<<b>8. Test evaluation</b><br/>Accuracy, precision, recall, F1-score<br/>Confusion matrix, Wilson 95% CI>, fillcolor="#efe8f5"];
+    s9 [label=<<b>9. Statistical comparison</b><br/>McNemar test, 15 model pairs>, fillcolor="#efe8f5"];
+  }
+  s1->s2->s3->s4->s5->s6;
+  s6->cnn; s6->trf; s6->hyb;
+  cnn->s7; trf->s7; hyb->s7;
+  s7->s8->s9;
+}

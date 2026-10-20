@@ -1,0 +1,15 @@
+# Training and evaluation (Kaggle Notebooks, GPU). The exact versions of each run are stored
+# in the "env" field of metrics_{MODEL}.json.
+timm==1.0.29
+torch
+scikit-learn
+statsmodels
+numpy
+pandas
+matplotlib
+pillow
+
+# Data leakage audit and grouping (notebook 00b, CPU)
+opencv-python-headless==5.0.0.93
+onnxruntime==1.29.0
+onnx
